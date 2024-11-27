@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
+
 
 void main() {
   runApp(MyApp());
@@ -8,7 +10,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Scrollable Boxes',
+      title: 'Advent Calendar',
       theme: ThemeData(primarySwatch: Colors.blue),
       home: AdventCalendarBoxes(),
     );
@@ -16,17 +18,47 @@ class MyApp extends StatelessWidget {
 }
 
 class AdventCalendarBoxes extends StatefulWidget {
+  const AdventCalendarBoxes({super.key});
+
   @override
   State<AdventCalendarBoxes> createState()=> _AdventCalendarBoxesState();
 }
 
 class _AdventCalendarBoxesState extends State<AdventCalendarBoxes>{
-  var _list = List<Color>.generate(25, (i) => Colors.blueAccent);
+  final _colourList = List<Color>.generate(25, (i) => Colors.blueAccent);
+  final _dateList = List<String>.generate(25, (i) => "${i+1}");
+  final _messageList = List<String>.generate(25, (i) => "Message goes here!");
+  final _openedList = List<bool>.generate(25, (i) => false);
+
   void onBoxClick(int index) {
     setState(() {
-          _list[index-1] = Colors.white;
+          _colourList[index-1] = Colors.white;
+          _openedList[index-1] = true;
     });
   }
+
+  Text generateText(int index){
+    if (_openedList[index] == true) {
+          return Text(
+                  _messageList[index],
+                  style: const TextStyle( 
+                    fontSize: 20,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                      )
+                    );
+    } else {
+      return Text(
+                  _dateList[index],
+                  style: const TextStyle(
+                    fontSize: 20,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                      )
+                    );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,7 +72,7 @@ class _AdventCalendarBoxesState extends State<AdventCalendarBoxes>{
               height: 100,
               margin: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: _list[index],
+                color: _colourList[index],
                 borderRadius: BorderRadius.circular(10),
                 boxShadow: [
                   BoxShadow(
@@ -52,14 +84,7 @@ class _AdventCalendarBoxesState extends State<AdventCalendarBoxes>{
                 ],
               ),
               child: Center(
-                child: Text(
-                  'Box ${index + 1}',
-                  style: const TextStyle(
-                    fontSize: 20,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                child: generateText(index)
               ),
             ),
           );
